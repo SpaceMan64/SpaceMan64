@@ -8,12 +8,14 @@ public class waypointsController : MonoBehaviour {
 
     public GameObject[] waypoints;
     public GameObject nextWapoint;
+    public GameObject persistantObject;
     public float countDown;
     public float curDown;
     public float timeBonus;
     public Text timeRemaining;
     public Text totalTime;
     private float curOverTime = 0;
+    public string trackName;
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +40,7 @@ public class waypointsController : MonoBehaviour {
                     curOverTime -= 60;
                 }
                 string score = minutes + ":" + curOverTime;
+                persistantObject.GetComponent<persistantData>().setInfo(score, true, trackName);
                 Debug.Log("Winner:"+score);
             }
             else if (waypoints[i].GetComponent<waypointCollider>().collided)
@@ -55,7 +58,22 @@ public class waypointsController : MonoBehaviour {
         curOverTime += Time.deltaTime;
         if(curDown <= 0.0f)
         {
+            float minutes = 0;
+            while (curOverTime >= 60)
+            {
+                minutes += 1;
+                curOverTime -= 60;
+            }
+            string score = minutes + ":" + curOverTime;
+            persistantObject.GetComponent<persistantData>().setInfo(score, false, trackName);
             Debug.Log("Loser");
         }
 	}
+
+    public void setVars(GameObject _persistantObject, Text _totalTime, Text _timeRemaining)
+    {
+        persistantObject = _persistantObject;
+        totalTime = _totalTime;
+        timeRemaining = _timeRemaining;
+    }
 }
